@@ -1,4 +1,4 @@
-import { mapParser, orP, Parser } from '../parser/parser';
+import { mapParser, altP, Parser } from '../parser/parser';
 import { parserS } from '../parser/parser-utils';
 
 export type JsonBoolean = {
@@ -14,4 +14,4 @@ const JsonBoolean = (value: 'true' | 'false'): JsonBoolean => ({
     value: value === 'true'
 });
 
-export const booleanParser: Parser<JsonBoolean> = mapParser (JsonBoolean) (orP (falseParser) (trueParser));
+export const booleanParser: Parser<JsonBoolean> = mapParser (JsonBoolean) (altP (falseParser) (trueParser));

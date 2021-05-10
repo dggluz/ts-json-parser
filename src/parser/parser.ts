@@ -39,7 +39,15 @@ export const liftA2Parser: <A, B, C> (fn: (x: A) => (y: B) => C) => (p1: Parser<
         applyParser (mapParser (fn) (p1)) (p2);
 ;
 
-export const orP: <A> (p1: Parser<A>) => <B> (p2: Parser<B>) => Parser <A | B> =
+export const keepLeftParser: <T> (leftParser: Parser <T>) => (rightParser: Parser<unknown>) => Parser<T> =
+    liftA2Parser (left => right => left) 
+;
+
+export const keepRightParser = (leftParser: Parser<unknown>) => <T> (rightParser: Parser<T>): Parser<T> =>
+    liftA2Parser (left => (right: T) => right) (leftParser) (rightParser)
+;
+
+export const altP: <A> (p1: Parser<A>) => <B> (p2: Parser<B>) => Parser <A | B> =
     p1 => p2 =>
         input => {
             const result1 = p1(input);
@@ -54,11 +62,9 @@ export const anyP: {
     <A, B, C, D, E> (ps: [Parser<A>, Parser<B>, Parser<C>, Parser<D>, Parser<E>]): Parser<A | B | C | D | E>;
     <A, B, C, D> (ps: [Parser<A>, Parser<B>, Parser<C>, Parser<D>]): Parser<A | B | C | D>;
     <A, B, C> (ps: [Parser<A>, Parser<B>, Parser<C>]): Parser<A | B | C>;
-    <A, B, C> (ps: [Parser<A>, Parser<B>, Parser<C>]): Parser<A | B | C>;
     <A, B> (ps: [Parser<A>, Parser<B>]): Parser<A | B>;
-    <A> (ps: [Parser<A>]): Parser<A>;
     <T> (ps: Parser<T>[]): Parser<T>;
 } =
     <T> (ps: Parser<T>[]) =>
-        ps.reduce ((accumParser, aParser) => orP (accumParser) (aParser))
+        ps.reduce ((accumParser, aParser) => altP (accumParser) (aParser))
 ;

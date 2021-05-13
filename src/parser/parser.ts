@@ -68,3 +68,22 @@ export const anyP: {
     <T> (ps: Parser<T>[]) =>
         ps.reduce ((accumParser, aParser) => altP (accumParser) (aParser))
 ;
+
+export const prependParser = <T> (pX: Parser<T>) => (pXs: Parser<T[]>): Parser<T[]> =>
+    liftA2Parser ((x: T)  => (xs: T[]) => [x].concat(xs)) (pX) (pXs)
+;
+
+export const zeroOrMore: <T> (elementParser: Parser<T>) => Parser<T[]> =
+    elementParser =>
+        altP (oneOrMore (elementParser)) (Parser ([]))
+;
+
+export const oneOrMore: <T> (elementParser: Parser<T>) => Parser<T[]> =
+    elementParser =>
+        prependParser (elementParser) ((x) => zeroOrMore (elementParser) (x))
+;
+
+export const separatedByParser: <S> (separatorP: Parser<S>) => <E> (elementP: Parser<E>) => Parser<E[]> =
+    separatorP => elementP => 
+        altP (prependParser (elementP) (zeroOrMore (keepRightParser (separatorP) (elementP)))) (Parser ([]))
+;

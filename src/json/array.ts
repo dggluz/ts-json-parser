@@ -1,6 +1,6 @@
 import { JsonValue, jsonParser } from '../json-parser';
 import { mapParser, Parser, separatedByParser } from '../parser/parser';
-import { keepMiddleParser, parserS, separatorParser, spanP } from '../parser/parser-utils';
+import { keepMiddleParser, parserS, commaSeparatorParser, whiteSpaceParser } from '../parser/parser-utils';
 
 export type JsonArray = {
     tag: 'json-array';
@@ -15,11 +15,11 @@ const JsonArray = (value: JsonValue[]): JsonArray => ({
 export const arrayParser: Parser<JsonArray> = mapParser
     (JsonArray)
     (keepMiddleParser
-        (parserS ('['))
+        (keepMiddleParser (whiteSpaceParser) (parserS ('[')) (whiteSpaceParser))
         (separatedByParser
-            (separatorParser)
+            (commaSeparatorParser)
             ((x) => jsonParser (x))
         )
-        (parserS(']'))
+        (keepMiddleParser (whiteSpaceParser) (parserS (']')) (whiteSpaceParser))
     )
 ;

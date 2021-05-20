@@ -2,6 +2,7 @@ import { arrayParser, JsonArray } from './json/array';
 import { booleanParser, JsonBoolean } from './json/boolean';
 import { JsonNull, nullParser } from './json/null';
 import { JsonNumber, numberParser } from './json/number';
+import { JsonObject, objectParser } from './json/object';
 import { JsonString, stringParser } from './json/string';
 import { anyP, Parser } from './parser/parser';
 
@@ -14,7 +15,7 @@ export type JsonValue =
     | JsonNumber
     | JsonString
     | JsonArray
-    // | JsonObject
+    | JsonObject
 ;
 
-export const jsonParser: Parser<JsonValue> = anyP ([nullParser, booleanParser, numberParser, stringParser, arrayParser]);
+export const jsonParser: Parser<JsonValue> = anyP ([nullParser, booleanParser, numberParser, stringParser, arrayParser, objectParser]);

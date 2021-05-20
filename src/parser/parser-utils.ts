@@ -63,4 +63,6 @@ export const keepMiddleParser: (leftParser: Parser<unknown>) => <T> (middleParse
 
 export const whiteSpaceParser = spanP (char => char === ' ');
 
-export const separatorParser = keepMiddleParser (whiteSpaceParser) (parserS(',')) (whiteSpaceParser);
+export const commaSeparatorParser = keepMiddleParser (whiteSpaceParser) (parserS(',')) (whiteSpaceParser);
+
+export const colonSeparatorParser = keepMiddleParser (whiteSpaceParser) (parserS(':')) (whiteSpaceParser);
